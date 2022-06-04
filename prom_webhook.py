@@ -17,6 +17,7 @@ class Alert:
         self.expectedSR = kwargs.get("expectedSR")
         self.actualSR = kwargs.get("actualSR")
         self.startTime = kwargs.get("startTime")
+        self.status = kwargs.get("severity")
 
     def print(self):
         print("MID: %s, alertname: %s" % (self.merchantId, self.alertname))
@@ -93,6 +94,7 @@ def parse_prometheus(alert: JSON, external_url: str):
         expectedSR=sr[0],
         actualSR=sr[1],
         startTime=attributes['startsAt'],
+        severity=severity,
         text=text,
         event_type='prometheusAlert',
         raw_data=alert,
@@ -114,6 +116,8 @@ class PrometheusWebhook:
 
 
 def send_to_slack(alert: Alert) -> None:
+    if alert.status != "firing":
+        return
     header = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     url = get_slack_endpoint(alert.merchantId)
     payload = {
