@@ -33,7 +33,7 @@ def verify_message_signature(message, sig):
     #throws exception if it fails
     verifier.verify(digest, sig)
     print('Successfully verified message')
-
+    
 
 message = "hello world!"
 sig = sign_message(message)
